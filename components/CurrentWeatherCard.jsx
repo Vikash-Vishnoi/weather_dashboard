@@ -12,7 +12,7 @@ import {
 } from "@/lib/utils";
 import { Droplets, Wind, Eye, Gauge, Sunrise, Sunset, Thermometer } from "lucide-react";
 
-export function CurrentWeatherCard({ data, unit }) {
+export function CurrentWeatherCard({ data, unit, localTime, isUpdating }) {
   const dayTime = checkIsDay(data.sunrise, data.sunset, data.dt);
 
   const stats = [
@@ -56,8 +56,9 @@ export function CurrentWeatherCard({ data, unit }) {
 
   return (
     <div className="animate-fade-in">
-      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-8">
-        <div className="flex flex-col items-center sm:items-start">
+      <div className="flex flex-col sm:flex-row items-center sm:items-center gap-4 mb-3">
+        {/* Left: Temperature */}
+        <div className="flex flex-col items-center sm:items-start shrink-0">
           <div className="flex items-baseline gap-2">
             <span className="text-8xl sm:text-9xl font-thin text-white tracking-tighter leading-none">
               {data.temp}
@@ -79,7 +80,26 @@ export function CurrentWeatherCard({ data, unit }) {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-3 sm:ml-auto">
+        {/* Center: City name + local time */}
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight leading-tight">
+            {data.city}
+          </h2>
+          <span className="text-lg sm:text-xl font-light text-white/55 tracking-wide mt-0.5">
+            {data.country}
+          </span>
+          {localTime && (
+            <p className="text-white/40 text-sm mt-2 font-medium">
+              Local time · {localTime}
+            </p>
+          )}
+          {isUpdating && (
+            <span className="text-xs text-white/30 mt-1">Updating...</span>
+          )}
+        </div>
+
+        {/* Right: Weather icon + condition */}
+        <div className="flex flex-col items-center gap-3 shrink-0">
           <WeatherIcon
             conditionId={data.condition.id}
             isDay={dayTime}
@@ -93,7 +113,7 @@ export function CurrentWeatherCard({ data, unit }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 sm:grid-cols-3 gap-2">
         {stats.map((stat, i) => (
           <div
             key={i}

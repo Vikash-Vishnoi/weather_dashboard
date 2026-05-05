@@ -47,7 +47,7 @@ export function SearchBar({
       <form onSubmit={handleSubmit} className="relative">
         <div
           className={
-            `flex items-center gap-3 px-4 py-3.5 rounded-2xl ` +
+            `flex items-center gap-3 pl-4 rounded-2xl overflow-hidden ` +
             `bg-white/10 border transition-all duration-300 ` +
             `${isFocused ? "border-white/50 shadow-lg shadow-black/20" : "border-white/20"}`
           }
@@ -64,26 +64,26 @@ export function SearchBar({
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
             placeholder="Search city..."
-            className="flex-1 bg-transparent text-white placeholder-white/50 outline-none text-base font-medium"
+            className="flex-1 bg-transparent text-white placeholder-white/50 outline-none text-base font-medium py-3.5"
           />
 
           {query && (
             <button
               type="button"
               onClick={() => setQuery("")}
-              className="text-white/50 hover:text-white transition-colors"
+              className="text-white/50 hover:text-white transition-colors shrink-0"
             >
               <X size={16} />
             </button>
           )}
 
-          <div className="w-px h-5 bg-white/20" />
+          <div className="w-px h-5 bg-white/20 shrink-0" />
 
           <button
             type="button"
             onClick={onGeolocate}
             disabled={isGeoLoading}
-            className="flex items-center gap-1.5 text-white/70 hover:text-white transition-colors text-sm font-medium shrink-0"
+            className="flex items-center gap-1.5 px-3 text-white/70 hover:text-white transition-colors text-sm font-medium shrink-0 self-stretch"
             title="Use my location"
           >
             {isGeoLoading ? (
@@ -92,6 +92,23 @@ export function SearchBar({
               <MapPin size={16} />
             )}
             <span className="hidden sm:inline">Locate</span>
+          </button>
+
+          <button
+            type="submit"
+            disabled={!query.trim() || isLoading}
+            title="Search"
+            className="
+              flex items-center gap-2 px-5 self-stretch shrink-0
+              bg-gradient-to-r from-sky-500 to-blue-600
+              hover:from-sky-400 hover:to-blue-500
+              disabled:from-sky-500/30 disabled:to-blue-600/30 disabled:cursor-not-allowed
+              text-white text-sm font-semibold
+              transition-all duration-200
+            "
+          >
+            <Search size={15} />
+            <span className="hidden sm:inline">Search</span>
           </button>
         </div>
       </form>

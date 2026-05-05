@@ -20,6 +20,7 @@ export default function WeatherClient() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isGeoLoading, setIsGeoLoading] = useState(false);
+  const [isAutoGeoLocating, setIsAutoGeoLocating] = useState(false);
 
   const lastRequestRef = useRef(null);
   const lastActionRef = useRef("search");
@@ -70,11 +71,11 @@ export default function WeatherClient() {
     [fetchWeather]
   );
 
-  const handleGeolocate = useCallback(() => {
+  const handleGeolocate = useCallback((options = {}) => {
     lastActionRef.current = "geolocate";
     lastRequestRef.current = null;
     if (!navigator.geolocation) {
-      setError("Geolocation is not supported in this browser.");
+      if (!options.silent) setError("Geolocation is not supported in this browser.");
       return;
     }
 
@@ -89,11 +90,17 @@ export default function WeatherClient() {
         };
         lastRequestRef.current = request;
         setIsGeoLoading(false);
+        if (options.silent) setIsAutoGeoLocating(false);
         fetchWeather(request);
       },
       () => {
         setIsGeoLoading(false);
-        setError("Unable to access your location.");
+        if (options.silent) {
+          // Auto-geolocate failed (user ignored/denied/timed out) — fall back silently
+          setIsAutoGeoLocating(false);
+        } else {
+          setError("Unable to access your location.");
+        }
       },
       { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
     );
@@ -123,7 +130,9 @@ export default function WeatherClient() {
       } catch {}
     }
 
-    handleGeolocate();
+    // Mark as silently auto-geolocating so errors don't block the welcome screen
+    setIsAutoGeoLocating(true);
+    handleGeolocate({ silent: true });
   }, [handleGeolocate]);
 
   const handleRetry = useCallback(() => {
@@ -157,32 +166,14 @@ export default function WeatherClient() {
     : null;
   const showSkeleton = isLoading && !data;
   const isUpdating = isLoading && data;
-  const showEmpty = !error && !data && !showSkeleton;
+  // Show the welcome screen if there's no data/error, OR if the only "error"
+  // is from the silent auto-geolocate attempt (user ignored/denied permission).
+  const showEmpty = (!error && !data && !showSkeleton) || (isAutoGeoLocating && !data);
 
   return (
-    <section className="flex flex-col gap-10">
-      <div className="px-6 pt-10 pb-14 sm:px-8 sm:pt-12 sm:pb-16">
-        <header className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="space-y-4">
-        
-            {data && (
-              <div className="flex flex-wrap items-center gap-3 text-xs text-white/50">
-                <span className="px-3 py-1 rounded-full bg-white/10 border border-white/10">
-                  {data.current.city}, {data.current.country}
-                </span>
-                {localTime && (
-                  <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10">
-                    Local time {localTime}
-                  </span>
-                )}
-                {isUpdating && <span className="text-white/40">Updating...</span>}
-              </div>
-            )}
-          </div>
-
-        </header>
-
-        <div className="mt-6">
+    <section className="flex flex-col gap-4">
+      <div className="px-2 pt-4 pb-2 sm:px-4">
+        <div className="mt-0">
           <SearchBar
             onSearch={handleSearch}
             onGeolocate={handleGeolocate}
@@ -191,6 +182,34 @@ export default function WeatherClient() {
             isLoading={isLoading}
             isGeoLoading={isGeoLoading}
           />
+
+          {/* C / F unit toggle */}
+          <div className="flex justify-end mt-3 pr-1">
+            <div className="flex items-center rounded-xl bg-white/10 border border-white/15 p-0.5 gap-0.5">
+              <button
+                type="button"
+                onClick={() => unit === "imperial" && toggleUnit()}
+                className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                  unit === "metric"
+                    ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow shadow-sky-900/40"
+                    : "text-white/40 hover:text-white/70"
+                }`}
+              >
+                °C
+              </button>
+              <button
+                type="button"
+                onClick={() => unit === "metric" && toggleUnit()}
+                className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                  unit === "imperial"
+                    ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow shadow-sky-900/40"
+                    : "text-white/40 hover:text-white/70"
+                }`}
+              >
+                °F
+              </button>
+            </div>
+          </div>
         </div>
 
         {showEmpty && (
@@ -204,14 +223,14 @@ export default function WeatherClient() {
 
       {!showSkeleton && (error || data) && (
         <div
-          className={`grid gap-6 lg:grid-cols-[1.15fr_0.85fr] ${isUpdating ? "opacity-70" : ""}`}
+          className={`grid gap-4 lg:grid-cols-[1.15fr_0.85fr] ${isUpdating ? "opacity-70" : ""}`}
         >
-          <div className="space-y-6">
+          <div className="space-y-3">
             {error && <ErrorState message={error} onRetry={handleRetry} />}
-            {!error && data && <CurrentWeatherCard data={data.current} unit={unit} />}
+            {!error && data && <CurrentWeatherCard data={data.current} unit={unit} localTime={localTime} isUpdating={isUpdating} />}
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-3">
             {!error && data && data.forecast?.length > 0 && (
               <ForecastCard forecast={data.forecast} unit={unit} />
             )}

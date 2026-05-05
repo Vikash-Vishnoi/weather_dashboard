@@ -22,7 +22,7 @@ export function ForecastCard({ forecast, unit }) {
           return (
             <div
               key={i}
-              className="flex items-center gap-3 sm:gap-4 py-3 border-b border-white/5 last:border-0"
+              className="flex items-center gap-3 sm:gap-4 py-2.5 border-b border-white/5 last:border-0"
               style={{
                 opacity: 0,
                 animation: "fadeSlideIn 0.4s ease forwards",
