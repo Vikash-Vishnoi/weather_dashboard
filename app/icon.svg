@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="120" height="120">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <rect width="120" height="120" rx="28" fill="url(#bg)"/>
+  
+  <!-- Sun -->
+  <circle cx="45" cy="45" r="22" fill="url(#sun)" filter="url(#shadow)"/>
+  
+  <!-- Cloud -->
+  <path d="M40 85h45a15 15 0 000-30 15 15 0 00-2-0.13 20 20 0 00-36 7.13 12 12 0 00-7 23z" fill="#ffffff" filter="url(#shadow)"/>
+</svg>
