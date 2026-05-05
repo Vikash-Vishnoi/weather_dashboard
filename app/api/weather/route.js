@@ -7,11 +7,11 @@ export async function GET(request) {
   const lon = searchParams.get("lon");
   const unit = searchParams.get("unit") || "metric";
 
-  const apiKey = process.env.OPENWEATHER_API_KEY;
+  const apiKey = process.env.WEATHER_API_KEY;
 
   if (!apiKey) {
     return Response.json(
-      { error: "Weather API key not configured. Please add OPENWEATHER_API_KEY to your .env.local file." },
+      { error: "Weather API key not configured. Please add WEATHER_API_KEY to your .env.local file." },
       { status: 500 }
     );
   }

@@ -9,9 +9,7 @@ import { ErrorState } from "@/components/ErrorState";
 import { WelcomeState } from "@/components/WelcomeState";
 import { useSearchHistory } from "@/hooks/useSearchHistory";
 import { useUnit } from "@/hooks/useUnit";
-import { formatTime, getWeatherGradient, isDay } from "@/lib/utils";
-import { ThermometerSun } from "lucide-react";
-
+import { formatTime, isDay } from "@/lib/utils";
 export default function WeatherClient() {
   const { unit, toggleUnit } = useUnit();
   const { history, addToHistory, clearHistory, removeFromHistory } = useSearchHistory();
@@ -158,9 +156,7 @@ export default function WeatherClient() {
   const dayTime = data?.current
     ? isDay(data.current.sunrise, data.current.sunset, data.current.dt)
     : true;
-  const headerGradient = data?.current
-    ? getWeatherGradient(data.current.condition.id, dayTime)
-    : "from-sky-500 via-blue-500 to-indigo-600";
+
   const localTime = data?.current
     ? formatTime(data.current.dt, data.current.timezone)
     : null;
@@ -222,20 +218,23 @@ export default function WeatherClient() {
 
       {showSkeleton && <LoadingSkeleton />}
 
-      {!showSkeleton && (error || data) && (
+      {!showSkeleton && error && (
+        <ErrorState message={error} onRetry={handleRetry} />
+      )}
+
+      {!showSkeleton && !error && data && (
         <div
           className={`grid gap-4 lg:grid-cols-[1.15fr_0.85fr] ${isUpdating ? "opacity-70" : ""}`}
         >
           <div className="flex flex-col gap-3 h-full">
-            {error && <ErrorState message={error} onRetry={handleRetry} />}
-            {!error && data && <CurrentWeatherCard data={data.current} unit={unit} localTime={localTime} isUpdating={isUpdating} />}
+            <CurrentWeatherCard data={data.current} unit={unit} localTime={localTime} isUpdating={isUpdating} />
           </div>
 
           <div className="flex flex-col gap-3 h-full">
-            {!error && data && data.forecast?.length > 0 && (
+            {data.forecast?.length > 0 && (
               <ForecastCard forecast={data.forecast} unit={unit} />
             )}
-            {!error && data && (!data.forecast || data.forecast.length === 0) && (
+            {(!data.forecast || data.forecast.length === 0) && (
               <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-white/60">
                 Forecast data is currently unavailable.
               </div>
