@@ -10,11 +10,11 @@ export function ForecastCard({ forecast, unit }) {
   const range = maxTemp - minTemp || 1;
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-3xl p-5 sm:p-6">
-      <h2 className="text-white/40 text-xs font-medium uppercase tracking-widest mb-5">
+    <div className="bg-white/5 border border-white/10 rounded-3xl p-5 sm:p-6 h-full flex flex-col">
+      <h2 className="text-white/40 text-xs font-medium uppercase tracking-widest mb-5 shrink-0">
         5-Day Forecast
       </h2>
-      <div className="space-y-1">
+      <div className="flex-1 flex flex-col justify-between">
         {forecast.map((day, i) => {
           const barLeft = ((day.temp_min - minTemp) / range) * 100;
           const barWidth = ((day.temp_max - day.temp_min) / range) * 100;

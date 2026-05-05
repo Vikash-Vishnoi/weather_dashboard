@@ -55,15 +55,15 @@ export function CurrentWeatherCard({ data, unit, localTime, isUpdating }) {
   ];
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in h-full flex flex-col justify-between">
       <div className="flex flex-col sm:flex-row items-center sm:items-center gap-4 mb-3">
         {/* Left: Temperature */}
         <div className="flex flex-col items-center sm:items-start shrink-0">
           <div className="flex items-baseline gap-2">
-            <span className="text-8xl sm:text-9xl font-thin text-white tracking-tighter leading-none">
+            <span className="text-7xl sm:text-9xl font-thin text-white tracking-tighter leading-none">
               {data.temp}
             </span>
-            <span className="text-4xl text-white/60 font-light mt-2">
+            <span className="text-3xl sm:text-4xl text-white/60 font-light mt-2">
               °{unit === "metric" ? "C" : "F"}
             </span>
           </div>
@@ -113,7 +113,7 @@ export function CurrentWeatherCard({ data, unit, localTime, isUpdating }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 sm:grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
         {stats.map((stat, i) => (
           <div
             key={i}

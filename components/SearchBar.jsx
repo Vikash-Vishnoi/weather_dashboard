@@ -8,6 +8,7 @@ export function SearchBar({
   onGeolocate,
   history,
   onClearHistory,
+  onRemoveHistory,
   isLoading,
   isGeoLoading,
 }) {
@@ -64,7 +65,7 @@ export function SearchBar({
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsFocused(true)}
             placeholder="Search city..."
-            className="flex-1 bg-transparent text-white placeholder-white/50 outline-none text-base font-medium py-3.5"
+            className="flex-1 bg-transparent text-white placeholder-white/50 outline-none text-base font-medium py-3.5 min-w-0 pr-2"
           />
 
           {query && (
@@ -127,16 +128,31 @@ export function SearchBar({
           </div>
           <div className="max-h-64 overflow-y-auto">
             {history.map((item, i) => (
-              <button
+              <div
                 key={i}
-                onClick={() => handleHistoryClick(item.city)}
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left"
-                type="button"
+                className="w-full flex items-center px-4 py-2 hover:bg-white/5 transition-colors"
               >
-                <Clock size={14} className="text-white/30 shrink-0" />
-                <span className="text-white/80 text-sm font-medium">{item.city}</span>
-                <span className="text-white/30 text-xs ml-auto">{item.country}</span>
-              </button>
+                <button
+                  onClick={() => handleHistoryClick(item.city)}
+                  className="flex-1 flex items-center gap-3 text-left py-1"
+                  type="button"
+                >
+                  <Clock size={14} className="text-white/30 shrink-0" />
+                  <span className="text-white/80 text-sm font-medium">{item.city}</span>
+                  <span className="text-white/30 text-xs ml-auto pr-3">{item.country}</span>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemoveHistory(item.city);
+                  }}
+                  className="text-white/30 hover:text-white/80 transition-colors p-1.5 shrink-0 rounded-lg hover:bg-white/10"
+                  type="button"
+                  title="Remove from history"
+                >
+                  <X size={14} />
+                </button>
+              </div>
             ))}
           </div>
         </div>

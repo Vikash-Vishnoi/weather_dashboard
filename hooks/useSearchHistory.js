@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 const STORAGE_KEY = "weather_search_history";
-const MAX_HISTORY = 8;
+const MAX_HISTORY = 5;
 
 export function useSearchHistory() {
   const [history, setHistory] = useState([]);
@@ -38,5 +38,17 @@ export function useSearchHistory() {
     } catch {}
   }, []);
 
-  return { history, addToHistory, clearHistory };
+  const removeFromHistory = useCallback((cityToRemove) => {
+    setHistory((prev) => {
+      const updated = prev.filter(
+        (item) => item.city.toLowerCase() !== cityToRemove.toLowerCase()
+      );
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  }, []);
+
+  return { history, addToHistory, clearHistory, removeFromHistory };
 }

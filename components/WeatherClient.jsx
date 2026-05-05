@@ -14,7 +14,7 @@ import { ThermometerSun } from "lucide-react";
 
 export default function WeatherClient() {
   const { unit, toggleUnit } = useUnit();
-  const { history, addToHistory, clearHistory } = useSearchHistory();
+  const { history, addToHistory, clearHistory, removeFromHistory } = useSearchHistory();
 
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
@@ -179,6 +179,7 @@ export default function WeatherClient() {
             onGeolocate={handleGeolocate}
             history={history}
             onClearHistory={clearHistory}
+            onRemoveHistory={removeFromHistory}
             isLoading={isLoading}
             isGeoLoading={isGeoLoading}
           />
@@ -225,12 +226,12 @@ export default function WeatherClient() {
         <div
           className={`grid gap-4 lg:grid-cols-[1.15fr_0.85fr] ${isUpdating ? "opacity-70" : ""}`}
         >
-          <div className="space-y-3">
+          <div className="flex flex-col gap-3 h-full">
             {error && <ErrorState message={error} onRetry={handleRetry} />}
             {!error && data && <CurrentWeatherCard data={data.current} unit={unit} localTime={localTime} isUpdating={isUpdating} />}
           </div>
 
-          <div className="space-y-3">
+          <div className="flex flex-col gap-3 h-full">
             {!error && data && data.forecast?.length > 0 && (
               <ForecastCard forecast={data.forecast} unit={unit} />
             )}
