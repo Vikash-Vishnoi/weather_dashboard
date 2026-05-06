@@ -15,7 +15,7 @@ A real-time weather dashboard built with Next.js, providing current weather and 
 2. **Environment:**
    Create `.env.local` and add your API key:
    ```
-   NEXT_PUBLIC_WEATHER_API_KEY=your_api_key_here
+   WEATHER_API_KEY=your_api_key_here
    ```
 
 3. **Run:**
